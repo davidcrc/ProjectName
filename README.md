@@ -21,3 +21,14 @@ npm install --save @react-native-community/async-storage
 -- Solo ios??
 sudo gem install cocoapods
 cd ios && pod install && cd ..
+
+
+mkdir Image Screen ./Screen/Components ./Screen/drawerScreens
+touch ./Screen/DrawerNavigationRoutes.js ./Screen/LoginScreen.js ./Screen/RegisterScreen.js ./Screen/SplashScreen.js ./Screen/Components/CustomSidebarMenu.js ./Screen/Components/NavigationDrawerHeader.js ./Screen/Components/loader.js ./Screen/drawerScreens/HomeScreen.js ./Screen/drawerScreens/SettingsScreen.js
+
+
+# Ejecutar
+
+    cd ProjectName
+    npm start
+    react-native run-android
