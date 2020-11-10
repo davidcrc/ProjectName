@@ -13,28 +13,40 @@ import {
     Keyboard,
     TouchableOpacity,
     KeyboardAvoidingView,
+    Dimensions
 } from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import Feather from 'react-native-vector-icons/Feather';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-community/async-storage';
 import Loader from './Components/loader';
 
 const LoginScreen = props => {
-    let [userEmail, setUserEmail] = useState('');
-    let [userPassword, setUserPassword] = useState('');
-    let [loading, setLoading] = useState(false);
-    let [errortext, setErrortext] = useState('');
 
-    const handleSubmitPress = () => {
-        setErrortext('');
-        if (!userEmail) {
-            alert('Please fill Email');
+    let [loading, setLoading] = useState(false);
+
+     
+    const [data, setData] = React.useState({
+        username: '',
+        password: '',
+        check_textInputChange: false,
+        secureTextEntry: true,
+        isValidUser: true,
+        isValidPassword: true,
+    });
+
+    const handleSubmitPress =  (userName, password) => {
+
+    
+        if ( data.username.length == 0 || data.password.length == 0 ) {
+            alert('Wrong Input!', 'Username or password field cannot be empty.', [
+                {text: 'Okay'}
+            ]);
             return;
         }
-        if (!userPassword) {
-            alert('Please fill Password');
-            return;
-        }
+        
         setLoading(true);
-        var dataToSend = { user_email: userEmail, user_password: userPassword };
+        var dataToSend = { user_email: userName, user_password: password };
         var formBody = [];
         for (var key in dataToSend) {
             var encodedKey = encodeURIComponent(key);
@@ -73,71 +85,158 @@ const LoginScreen = props => {
             });
     };
 
+    const textInputChange = (val) => {
+        if( val.trim().length >= 2 ) {
+            
+            setData({
+                ...data,
+                username: val,
+                check_textInputChange: true,
+                isValidUser: true
+            });
+        } else {
+            setData({
+                ...data,
+                username: val,
+                check_textInputChange: false,
+                isValidUser: false
+            });
+
+        }
+    }
+    const updateSecureTextEntry = () => {
+        setData({
+            ...data,
+            secureTextEntry: !data.secureTextEntry
+        });
+    }
+    const handleValidUser = (val) => {
+        // console.log("user "+ val )
+        if( val.trim().length >= 2 ) {
+            setData({
+                ...data,
+                isValidUser: true
+            });
+        } else {
+            setData({
+                ...data,
+                isValidUser: false
+            });
+        }
+    }
+
+    const handlePasswordChange = (val) => {
+        if( val.trim().length >= 6 ) {
+           
+            setData({
+                ...data,
+                password: val,
+                isValidPassword: true
+            });
+        } else {
+           
+            setData({
+                ...data,
+                password: val,
+                isValidPassword: false
+            });
+        }
+    }
+
     return (
         <View style={styles.mainBody}>
             <Loader loading={loading} />
             <ScrollView keyboardShouldPersistTaps="handled">
-                <View style={{ marginTop: 100 }}>
+                <View >
                     <KeyboardAvoidingView enabled>
                         <View style={{ alignItems: 'center' }}>
                             <Image
                                 source={require('../Image/aboutreact.png')}
-                                style={{
-                                    width: '50%',
-                                    height: 100,
-                                    resizeMode: 'contain',
-                                    margin: 30,
-                                }}
+                                style={styles.logo}
                             />
                         </View>
                         <View style={styles.SectionStyle}>
                             <TextInput
                                 style={styles.inputStyle}
-                                onChangeText={UserEmail => setUserEmail(UserEmail)}
+                                onChangeText={(val) => textInputChange(val)}
+                                onEndEditing={(e)=>handleValidUser(e.nativeEvent.text)}
                                 // underlineColorAndroid="#FFFFFF"
-                                placeholder="Enter Email" //dummy@abc.com
-                                placeholderTextColor="#F6F6F7"
+                                placeholder="Usuario" //dummy@abc.com
+                                selectionColor={'black'}
+                                placeholderTextColor="#21303E"
                                 autoCapitalize="none"
                                 keyboardType="email-address"
-                                // ref={ref => {
-                                //     this._emailinput = ref;
-                                // }}
                                 returnKeyType="next"
-                                // onSubmitEditing={() =>
-                                //     this._passwordinput && this._passwordinput.focus()
-                                // }
                                 blurOnSubmit={false}
                             />
+                             <Animatable.View
+                                animation="bounceIn"
+                                style={ {position: 'absolute', left: 255, top : 10} }
+
+                            >
+                                <FontAwesome 
+                                    name="user"
+                                    color="white"
+                                    size={20}
+                                    
+                                />
+                            </Animatable.View>
                         </View>
+                        {data.isValidUser ? null : (
+                            <Animatable.View animation="fadeInLeft" duration={500}>
+                            <Text style={styles.errorTextStyle}>{'Usuario no reconocible'}</Text>
+                            </Animatable.View>
+                        )}
                         <View style={styles.SectionStyle}>
                             <TextInput
                                 style={styles.inputStyle}
-                                onChangeText={UserPassword => setUserPassword(UserPassword)}
+                                // onChangeText={UserPassword => setUserPassword(UserPassword)}
+                                onChangeText={(val) => handlePasswordChange(val)}
                                 // underlineColorAndroid="#FFFFFF"
-                                placeholder="Enter Password" //12345
-                                placeholderTextColor="#F6F6F7"
+                                placeholder="Password" //12345
+                                placeholderTextColor="#21303E"
                                 keyboardType="default"
-                                // ref={ref => {
-                                //     this._passwordinput = ref;
-                                // }}
+                                selectionColor={'black'}
                                 onSubmitEditing={Keyboard.dismiss}
                                 blurOnSubmit={false}
-                                secureTextEntry={true}
+                                // secureTextEntry={true}
+                                autoCapitalize="none"
+                                secureTextEntry={data.secureTextEntry ? true : false}
                             />
+                            <TouchableOpacity
+                                onPress={updateSecureTextEntry}
+                                style={ {position: 'absolute', left: 255, top : 10} }
+                            >
+                                {data.secureTextEntry ? 
+                                <Feather 
+                                    name="eye-off"
+                                    color="white"
+                                    size={20}
+                                />
+                                :
+                                <Feather 
+                                    name="eye"
+                                    color="white"
+                                    size={20}
+                                />
+                                }
+                            </TouchableOpacity>
                         </View>
-                        {errortext != '' ? (
-                            <Text style={styles.errorTextStyle}> {errortext} </Text>
-                        ) : null}
+                        {data.isValidPassword ? null : (
+                            <Animatable.View animation="fadeInLeft" duration={500}>
+                            <Text style={styles.errorTextStyle}>{'Password minimo 6 caracteres'}</Text>
+                            </Animatable.View>
+                        )}
                         <TouchableOpacity
                             style={styles.buttonStyle}
                             activeOpacity={0.5}
-                            onPress={handleSubmitPress}>
-                            <Text style={styles.buttonTextStyle}>LOGIN</Text>
+                            onPress={() => handleSubmitPress(data.username, data.password )}>
+                            <Text style={styles.buttonTextStyle}>Iniciar</Text>
                         </TouchableOpacity>
                         <Text
                             style={styles.registerTextStyle}
                             onPress={() => props.navigation.navigate('RegisterScreen')}>
-                            New Here ? Register
+                            No tienes cuenta? Registrar
             </Text>
                     </KeyboardAvoidingView>
                 </View>
@@ -147,18 +246,28 @@ const LoginScreen = props => {
 };
 export default LoginScreen;
 
+
+const {height} = Dimensions.get("screen");
+const height_logo = height * 0.35;
+
 const styles = StyleSheet.create({
     mainBody: {
         flex: 1,
         justifyContent: 'center',
         backgroundColor: '#307ecc',
     },
+    logo: {
+        width: height_logo,
+        height: height_logo,
+        resizeMode: 'contain',
+        // margin: 30,
+    },
     SectionStyle: {
         flexDirection: 'row',
         height: 40,
         marginTop: 20,
-        marginLeft: 35,
-        marginRight: 35,
+        marginLeft: 50,
+        marginRight: 50,
         margin: 10,
     },
     buttonStyle: {
@@ -168,9 +277,9 @@ const styles = StyleSheet.create({
         borderColor: '#7DE24E',
         height: 40,
         alignItems: 'center',
-        borderRadius: 30,
-        marginLeft: 35,
-        marginRight: 35,
+        borderRadius: 15,
+        marginLeft: 50,
+        marginRight: 50,
         marginTop: 20,
         marginBottom: 20,
     },
@@ -181,12 +290,13 @@ const styles = StyleSheet.create({
     },
     inputStyle: {
         flex: 1,
-        color: 'white',
-        paddingLeft: 15,
-        paddingRight: 15,
+        color: 'white',        
+        paddingLeft: 20,
+        paddingRight: 20,
         borderWidth: 1,
-        borderRadius: 30,
+        borderRadius: 15,
         borderColor: 'white',
+        // backgroundColor: ''
     },
     registerTextStyle: {
         color: '#FFFFFF',
