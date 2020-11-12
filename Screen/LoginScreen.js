@@ -145,6 +145,13 @@ const LoginScreen = props => {
 
     return (
         <View style={styles.mainBody}>
+            
+            {/* <Image
+                style={{width: '100%',height:'100%', position: 'absolute'}}
+                source={require('../Image/fondo.png')}
+                resizeMode="stretch"
+            /> */}
+            
             <Loader loading={loading} />
             <ScrollView keyboardShouldPersistTaps="handled">
                 <View >

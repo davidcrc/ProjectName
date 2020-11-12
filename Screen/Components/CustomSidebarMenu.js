@@ -5,6 +5,23 @@ import React from 'react';
 //Import all required component
 import { View, StyleSheet, Text, Alert } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+// var user ;
+AsyncStorage.getItem("user_id").then(value => {
+    if(value == null){
+         //If value is not set or your async storage is empty
+         console.log("no hay valor")
+    }
+    else{
+         //Process your data 
+         console.log(value)
+         var user = value;
+    }
+  })
+    .catch(err => {
+        // Add some error handling
+        console.log("hay un error")
+});
+// console.log(user)
 
 const CustomSidebarMenu = props => {
     let items = [
@@ -57,7 +74,8 @@ const CustomSidebarMenu = props => {
             <View style={stylesSidebar.profileHeader}>
                 <View style={stylesSidebar.profileHeaderPicCircle}>
                     <Text style={{ fontSize: 25, color: '#307ecc' }}>
-                        {'About React'.charAt(0)}
+                        {'About React'.charAt(0)}                          
+                        
                     </Text>
                 </View>
                 <Text style={stylesSidebar.profileHeaderText}>AboutReact</Text>

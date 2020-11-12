@@ -35,11 +35,15 @@ touch ./Screen/DrawerNavigationRoutes.js ./Screen/LoginScreen.js ./Screen/Regist
 
     <!--  -->
     
-    npm install react-native-animatable --save
+npm install react-native-animatable --save
 
-    npm install --save react-native-vector-icons
-    react-native link
-    react-native link react-native-vector-icons
-    npm install --save react-native-linear-gradient
-    npm install --save react-native-vector-icons/Feather
-    npm install --save react-native-paper
+npm install --save react-native-vector-icons
+react-native link
+react-native link react-native-vector-icons
+npm install --save react-native-linear-gradient
+npm install --save react-native-vector-icons/Feather
+npm install --save react-native-paper
+
+
+<!-- En la vista home  -->
+npm i react-native-elements --save
